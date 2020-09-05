@@ -1,8 +1,7 @@
 import pytest
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support.expected_conditions import presence_of_element_located
+# from oxwall_helper import OxwallSite
+from pages.main_page import MainPage
 
 
 @pytest.fixture()
@@ -15,25 +14,12 @@ def driver():
 
 
 @pytest.fixture()
-def wait(driver):
-    return WebDriverWait(driver, 5)
-
-
-@pytest.fixture()
-def login(driver, wait):
-    # Login
-    sign_in_menu = driver.find_element(By.CLASS_NAME, "ow_signin_label")
-    sign_in_menu.click()
-    user_name = driver.find_element(By.NAME, "identity")
-    user_name.clear()
-    user_name.send_keys("admin")
-    password_field = driver.find_element(By.NAME, "password")
-    password_field.clear()
-    password_field.send_keys("pass")
-    sign_in_button = driver.find_element(By.NAME, "submit")
-    sign_in_button.click()
-    # Wait Dashboard page
-    wait.until(presence_of_element_located((By.CSS_SELECTOR, ".base_dashboard.active")),
-               message="Dashboard page doesn't open")
+def login(driver):
+    main_page = MainPage(driver)
+    sign_in_page = main_page.sign_in_initiate()
+    sign_in_page.fill_form("admin", "pass")
+    dashboard_page = sign_in_page.submit_form()
+    # app = OxwallSite(driver)
+    # app.login_as("admin", "pass")
     yield
-    # Logout
+    # app.logout()
