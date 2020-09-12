@@ -1,7 +1,9 @@
 import pytest
 from selenium import webdriver
 # from oxwall_helper import OxwallSite
+from pages.dashboard_page import DashboardPage
 from pages.main_page import MainPage
+from pages.signin_page import SignInWindow
 
 
 @pytest.fixture()
@@ -14,12 +16,26 @@ def driver():
 
 
 @pytest.fixture()
-def login(driver):
+def logged_user(driver):
+    username = "admin"
     main_page = MainPage(driver)
-    sign_in_page = main_page.sign_in_initiate()
-    sign_in_page.fill_form("admin", "pass")
-    dashboard_page = sign_in_page.submit_form()
+    main_page.sign_in_initiate()
+    login_page = SignInWindow(driver)
+    login_page.fill_form(username, "pass")
+    login_page.submit_form()
     # app = OxwallSite(driver)
     # app.login_as("admin", "pass")
-    yield
+    yield username
     # app.logout()
+
+@pytest.fixture()
+def main_page(driver):
+    return MainPage(driver)
+
+@pytest.fixture()
+def login_page(driver):
+    return SignInWindow(driver)
+
+@pytest.fixture()
+def dashboard_page(driver):
+    return DashboardPage(driver)

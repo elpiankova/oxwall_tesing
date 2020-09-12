@@ -4,7 +4,7 @@ import time
 from pages.dashboard_page import DashboardPage
 
 
-def test_empty_post_create(driver, login):
+def test_empty_post_create(driver, logged_user):
     dashboard_page = DashboardPage(driver)
     dashboard_page.new_post_textfield.send_keys("hjbjhbj")
 
@@ -16,15 +16,18 @@ def test_empty_post_create(driver, login):
     assert number_of_new_posts == number_of_old_posts
 
 
-def test_text_post_create_positive(driver, login):
+def test_text_post_create_positive(driver, logged_user):
     input_text = "New New text for post!"
 
     dashboard_page = DashboardPage(driver)
+    dashboard_page.is_this_page()
     number_of_posts = dashboard_page.count_posts()
     dashboard_page.create_new_post(input_text)
     posts = dashboard_page.wait_new_post(number_of_posts)
     # Verification new post
     assert posts[0].text == input_text
+    assert posts[0].time == "within 1 minute"
+    assert posts[0].user == logged_user
 
     # app = OxwallSite(driver)
     # input_text = "22222New text for post22222222!"
