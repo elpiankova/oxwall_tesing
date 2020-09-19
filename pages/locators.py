@@ -35,3 +35,6 @@ class PostLocator:
     LIKES_COUNTER = ()
     COMMENTS_COUNTER = ()
     COMMENTS_BUTTON = ()
+
+class SignUpPageLocators:
+    REAL_NAME = (By.XPATH, '//label[text()="Real name"]/../../td[2]/input')

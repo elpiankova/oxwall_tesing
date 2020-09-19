@@ -1,0 +1,26 @@
+[
+    {
+        "username": "test",
+        "password": "test",
+        "real_name": "Tester",
+        "email": "test@test.com",
+        "gender": 1,
+        "is_admin": false
+    },
+    {
+        "username": "tester",
+        "password": "secret",
+        "real_name": "Tester Tester",
+        "email": "tester@test.com",
+        "gender": 2,
+        "is_admin": false
+    },
+    {
+        "username": "admin",
+        "password": "pass",
+        "real_name": "Admin",
+        "email": "admin@test.com",
+        "gender": 1,
+        "is_admin": true
+    }
+]

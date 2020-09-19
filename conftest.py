@@ -1,14 +1,20 @@
+import json
+import os.path
+
 import pytest
 from selenium import webdriver
 # from oxwall_helper import OxwallSite
 from pages.dashboard_page import DashboardPage
 from pages.main_page import MainPage
 from pages.signin_page import SignInWindow
+from value_objects.user import User
+
+PROJECT_DIR = os.path.dirname(__file__)
 
 
 @pytest.fixture()
-def driver():
-    driver = webdriver.Chrome()
+def driver(selenium):
+    driver = selenium
     # driver.implicitly_wait(5)
     driver.get("http://127.0.0.1/oxwall/")
     yield driver
@@ -39,3 +45,12 @@ def login_page(driver):
 @pytest.fixture()
 def dashboard_page(driver):
     return DashboardPage(driver)
+
+
+with open(os.path.join(PROJECT_DIR, "data", "users.json"), encoding="utf8") as f:
+    user_list = json.load(f)
+
+
+@pytest.fixture(params=user_list, ids=[str(u) for u in user_list])
+def user(request):
+    return User(**request.param)

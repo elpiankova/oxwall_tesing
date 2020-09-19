@@ -41,3 +41,8 @@ class Page:
         els = self.wait.until(EC.visibility_of_all_elements_located(locator),
                               message=f"Not all elements visible by {locator}")
         return els
+
+    def find_any_visible_elements(self, locator):
+        els = self.wait.until(EC.visibility_of_any_elements_located(locator),
+                              message=f"No any elements visible by {locator}")
+        return els
