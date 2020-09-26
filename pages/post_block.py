@@ -1,4 +1,5 @@
 from pages.locators import PostLocator
+from value_objects.user import User
 
 
 class PostBlock:
@@ -17,7 +18,8 @@ class PostBlock:
     def user(self):
         user_element = self.element.find_element(*PostLocator.POST_USER)
         username = user_element.get_attribute("href").split("/")[-1]
-        return username
+        real_name = user_element.text
+        return User(username=username, real_name=real_name)
 
     # TODO
     # @property

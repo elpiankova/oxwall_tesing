@@ -1,10 +1,6 @@
-def test_login_positive(driver, main_page, login_page, dashboard_page, user):
-    # user = {
-    #     "username": "admin",
-    #     "password":  "pass",
-    #     "real_name": "Admin"
-    # }
 
+
+def test_login_positive(driver, main_page, login_page, dashboard_page, user):
     main_page.sign_in_menu.click()
     assert login_page.is_this_page()
     login_page.fill_form(user.username, user.password)

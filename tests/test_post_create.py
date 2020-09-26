@@ -15,8 +15,9 @@ with open(os.path.join(PROJECT_DIR, "data", "posts.json"), encoding="utf8") as f
 post_text_list.append(random_string(maxlen=1024, spaces=True, enter=True, cyr=True))
 
 
+@pytest.mark.regresssion
 @pytest.mark.parametrize("input_text",  post_text_list)
-def test_text_post_create_positive(driver, logged_user, input_text):
+def test_text_post_create_positive(driver, logged_user, input_text, db):
 
     dashboard_page = DashboardPage(driver)
     dashboard_page.is_this_page()
@@ -24,7 +25,8 @@ def test_text_post_create_positive(driver, logged_user, input_text):
     dashboard_page.create_new_post(input_text)
     posts = dashboard_page.wait_new_post(number_of_posts)
     # Verification new post
-    assert posts[0].text == input_text
+    assert db.get_last_text_post() == input_text
+    assert posts[0].text == input_text.replace('\n', "\r\n")
     assert posts[0].time == "within 1 minute"
     assert posts[0].user == logged_user
 
@@ -38,7 +40,9 @@ def test_text_post_create_positive(driver, logged_user, input_text):
     # assert posts[0].text == input_text
 
 
-def test_empty_post_create(driver, logged_user):
+@pytest.mark.smoke
+@pytest.mark.nondestructive
+def test_empty_post_create_negative(driver, logged_user):
     dashboard_page = DashboardPage(driver)
     dashboard_page.new_post_textfield.send_keys("hjbjhbj")
 
