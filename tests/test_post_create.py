@@ -3,6 +3,7 @@ import time
 import pytest
 import json
 import os.path
+import allure
 from data.random_string import random_string
 
 from conftest import PROJECT_DIR
@@ -15,20 +16,25 @@ with open(os.path.join(PROJECT_DIR, "data", "posts.json"), encoding="utf8") as f
 post_text_list.append(random_string(maxlen=1024, spaces=True, enter=True, cyr=True))
 
 
+@allure.title("Post create test")
+@allure.feature("Post feature")
+@allure.story("Create text post (without photos)")
 @pytest.mark.regresssion
 @pytest.mark.parametrize("input_text",  post_text_list)
-def test_text_post_create_positive(driver, logged_user, input_text, db):
-
-    dashboard_page = DashboardPage(driver)
-    dashboard_page.is_this_page()
-    number_of_posts = dashboard_page.count_posts()
-    dashboard_page.create_new_post(input_text)
-    posts = dashboard_page.wait_new_post(number_of_posts)
+def test_text_post_create_positive(dashboard_page, logged_user, input_text, db):
+    with allure.step("GIVEN initial amount of post in Oxwall database"):
+        dashboard_page.is_this_page()
+        number_of_posts = dashboard_page.count_posts()
+    with allure.step(f'WHEN I add a new post with "{input_text}" in Dashboard page'):
+        dashboard_page.create_new_post(input_text)
+        posts = dashboard_page.wait_new_post(number_of_posts)
     # Verification new post
-    assert db.get_last_text_post() == input_text
-    assert posts[0].text == input_text.replace('\n', "\r\n")
-    assert posts[0].time == "within 1 minute"
-    assert posts[0].user == logged_user
+    with allure.step(f'THEN this post block has this {input_text} '
+                     f'and author {logged_user.real_name} and time "within 1 minute"'):
+        assert db.get_last_text_post() == input_text
+        assert posts[0].text == input_text.replace('\n', "\r\n")
+        assert posts[0].time == "within 1 minute"
+        assert posts[0].user == logged_user
 
     # app = OxwallSite(driver)
     # input_text = "22222New text for post22222222!"
@@ -40,6 +46,9 @@ def test_text_post_create_positive(driver, logged_user, input_text, db):
     # assert posts[0].text == input_text
 
 
+@allure.title("Post delete test")
+@allure.feature("Post feature")
+@allure.story("Delete text post (without photos)")
 @pytest.mark.smoke
 @pytest.mark.nondestructive
 def test_empty_post_create_negative(driver, logged_user):
