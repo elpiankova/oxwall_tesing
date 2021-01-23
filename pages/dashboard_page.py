@@ -1,3 +1,5 @@
+import allure
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.expected_conditions import presence_of_element_located
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -21,7 +23,7 @@ class DashboardPage(InternalPage):
         return self.find_visible_element(DashboardLocators.SEND_BUTTON)
 
     @property
-    def posts(self):
+    def posts(self) -> list:
         # result = []
         # for element in self.driver.find_elements(*DashboardLocators.POST):
         #     result.append(PostBlock(element))
@@ -29,11 +31,11 @@ class DashboardPage(InternalPage):
         return [PostBlock(element) for element in self.driver.find_elements(*DashboardLocators.POST)]
 
     @property
-    def message(self):
+    def message(self) -> WebElement:
         message_element = self.find_visible_element(DashboardLocators.MESSAGE)
         return message_element
 
-    def wait_new_post(self, number_of_posts):
+    def wait_new_post(self, number_of_posts: int):
         # Wait new post appears
         posts = self.wait.until(
             presence_of_N_elements_located(DashboardLocators.POST, number_of_posts + 1),
@@ -41,6 +43,7 @@ class DashboardPage(InternalPage):
         )
         return [PostBlock(el) for el in posts]
 
+    @allure.step('WHEN I add a new post with "{input_text}" in Dashboard page')
     def create_new_post(self, input_text):
         # Create new post
         self.new_post_textfield.click()

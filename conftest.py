@@ -4,6 +4,11 @@ import os.path
 import pytest
 from selenium import webdriver
 # from oxwall_helper import OxwallSite
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.firefox import GeckoDriverManager
+from webdriver_manager.microsoft import EdgeChromiumDriverManager
+from webdriver_manager.opera import OperaDriverManager
+
 from db.db_connector import OxwallDB
 from pages.dashboard_page import DashboardPage
 from pages.main_page import MainPage
@@ -16,7 +21,9 @@ PROJECT_DIR = os.path.dirname(__file__)
 def pytest_addoption(parser):
     parser.addoption("--config", action="store", default="config.json",
                      help="Project config file name (json file)")
-    # parser.addoption("--config"....)
+    parser.addoption(
+        "--browser", action="store", default="Chrome", help="driver"
+    )
 
 
 @pytest.fixture(scope="session")
@@ -27,10 +34,19 @@ def config(request):
 
 
 @pytest.fixture()
-def driver(selenium, config, base_url):
-    driver = selenium
-    # driver.implicitly_wait(5)
-    # driver.get(config["base_url"])
+def driver(request, config, base_url):
+    option = request.config.getoption("--browser")
+    # base_url = base_url
+    if option.lower() == "chrome":
+        driver = driver = webdriver.Chrome(ChromeDriverManager().install())
+    elif option.lower() == "firefox":
+        driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
+    elif option.lower() == "edge":
+        driver = webdriver.Edge(EdgeChromiumDriverManager().install())
+    elif option.lower() == "opera":
+        driver = webdriver.Opera(executable_path=OperaDriverManager().install())
+    else:  #TODO
+        raise ValueError("Not correct option for browser")
     driver.get(base_url)
     driver.maximize_window()
     yield driver
